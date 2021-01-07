@@ -19,7 +19,7 @@ public class PaymentService {
 	@Autowired
 	private PaymentRepository paymentRepository ;
 	public PaymentService(PaymentRepository paymentRepository) {		
-		this.paymentRepo = paymentRepository;
+		this.paymentRepository = paymentRepository;
 	} 
 
 public Payment savePayment(Payment payment,Orders order) {
