@@ -17,14 +17,14 @@ import com.mobile.application.repository.PaymentRepository;
 
 public class PaymentService {
 	@Autowired
-	private PaymentRepository paymentRepo;
-	public PaymentService(PaymentRepository payRepo) {		
-		this.paymentRepo = payRepo;
+	private PaymentRepository paymentRepository ;
+	public PaymentService(PaymentRepository paymentRepository) {		
+		this.paymentRepo = paymentRepository;
 	} 
 
 public Payment savePayment(Payment payment,Orders order) {
 
-	return paymentRepo.save(payment);
+	return paymentRepository.save(payment);
 		
 	}
 }
