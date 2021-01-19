@@ -16,33 +16,34 @@ import com.mobile.application.repository.PaymentRepository;
 
 public class PaymentService {
 	@Autowired
-	private PaymentRepository paymentRepository;
 
-	public PaymentService(PaymentRepository paymentRepository) {
-		this.paymentRepository = paymentRepository;
-	}
+	private PaymentRepository paymentRepository1;
 
-	public Payment savePayment(Payment payment, Orders order) {
+	private PaymentRepository paymentRepository ;
+	public PaymentService(PaymentRepository paymentRepository) {		
+		this.paymentRepository1 = paymentRepository;
+	} 	public Payment savePayment(Payment payment, Orders order) {
 
-		return paymentRepository.save(payment);
+		return paymentRepository1.save(payment);
 
 	}
 
 	public Page<Payment> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		Page<Payment>payment=paymentRepository.findAll(pageable);
+	
+		Page<Payment>payment=paymentRepository1.findAll(pageable);
 		return payment;
 	}
 
 	public void save(Payment payment) {
-		paymentRepository.save(payment);
+	
+	paymentRepository1.save(payment);
 		
 	}
 
 	
 
 	public Page<Payment> findAllById(Integer id, Pageable paymentPageable) {
-		Page<Payment>payment= paymentRepository.findAllById(id,paymentPageable);
+		Page<Payment>payment= paymentRepository1.findAllById(id,paymentPageable);
 		return payment;
 	}
 }
