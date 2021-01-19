@@ -18,7 +18,8 @@ import com.mobile.application.dto.ItemDto;
 import com.mobile.application.exception.ItemNotfoundException;
 import com.mobile.application.model.Image;
 import com.mobile.application.model.Item;
-import com.mobile.application.repository.ItemRepository;
+import com.mobile.application.service.ItemServices;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +27,9 @@ import org.slf4j.LoggerFactory;
 @ResponseBody
 
 public class AccessoriesController {
-
+	
 	@Autowired
-	private ItemRepository itemRepository;
+	private ItemServices itemService;
 	@Autowired
 	private ModelMapper modelMapper;
 	Image image;
@@ -65,7 +66,7 @@ public class AccessoriesController {
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "powerbank";
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController power() response{}", product);
 
 		if (Objects.isNull(product)) {
@@ -95,7 +96,7 @@ public class AccessoriesController {
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "headset";
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController headset() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in headset");
@@ -126,7 +127,7 @@ public class AccessoriesController {
 		String itemType = "charger";
 		log.info("AccessoriesController charger()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController charger() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in charger");
@@ -157,7 +158,7 @@ public class AccessoriesController {
 		String itemType = "mobilecover";
 		log.info("AccessoriesController cover()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController cover() response{}", product);
 		if (Objects.isNull(product)) {
 			throw new ItemNotfoundException("No products Found.!");
@@ -188,7 +189,7 @@ public class AccessoriesController {
 		String itemType = "mobilescreen";
 		log.info("AccessoriesController screen()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController screen() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in mobile screen");
@@ -219,7 +220,7 @@ public class AccessoriesController {
 		String itemType = "usb";
 		log.info("AccessoriesController usb()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController usb() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in usb");
@@ -250,7 +251,7 @@ public class AccessoriesController {
 		String itemType = "applemobile";
 		log.info("AccessoriesController apple()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController apple() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in apple mobile");
@@ -281,7 +282,7 @@ public class AccessoriesController {
 		String itemType = "vivomobile";
 		log.info("AccessoriesController vivo()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController vivo() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in vivo mobile");
@@ -313,7 +314,7 @@ public class AccessoriesController {
 		String itemType = "realmemobile";
 		log.info("AccessoriesController realme()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController realme() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in realme mobile");
@@ -344,7 +345,7 @@ public class AccessoriesController {
 		String itemType = "oneplusmobile";
 		log.info("AccessoriesController oneplus()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController oneplus() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in oneplus mobile");
@@ -375,7 +376,7 @@ public class AccessoriesController {
 		String itemType = "samsungmobile";
 		log.info("AccessoriesController samsung()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController samsung() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in samsung mobile");
@@ -406,7 +407,7 @@ public class AccessoriesController {
 		String itemType = "redmimobile";
 		log.info("AccessoriesController mi()");
 
-		product = itemRepository.findByItemtype(itemType, pageable);
+		product = itemService.findByItemtype(itemType, pageable);
 		log.info("AccessoriesController mi() response{}", product);
 		if (Objects.isNull(product)) {
 			log.error("error found in mi mobile");

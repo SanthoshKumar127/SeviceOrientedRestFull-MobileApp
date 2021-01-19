@@ -10,22 +10,33 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.mobile.application.model.User;
-import com.mobile.application.repository.UserServiceImpl;
+import com.mobile.application.repository.UserRepository;
 
 @Service
 @Transactional
-public class UserServicesAdmin {
+public class UserServices {
 	@Autowired
-	UserServiceImpl userRepository;
+	UserRepository userRepository;
 
 	public List<User> getAllUsers() {
 		return (List<User>) userRepository.findAll();
 	}
 
 	public Page<User> getAllUser(Pageable pageable) {
-		// TODO Auto-generated method stub
 		return (Page<User>) userRepository.findAll(pageable);
 
 	}
 
+	public User findById(Integer id) {
+		return userRepository.findById(id);
+	}
+
+	public User findByEmailAndPassword(String email, String password) {
+		return userRepository.findByEmailAndPassword(email, password);
+	}
+
+	public User saveUser(User user) {
+		// TODO Auto-generated method stub
+		return userRepository.save(user);
+	}
 }

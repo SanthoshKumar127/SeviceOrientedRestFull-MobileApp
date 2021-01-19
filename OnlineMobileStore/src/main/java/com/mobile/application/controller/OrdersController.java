@@ -7,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,10 +27,10 @@ import com.mobile.application.model.Cart;
 import com.mobile.application.model.Item;
 import com.mobile.application.model.Orders;
 import com.mobile.application.model.User;
-import com.mobile.application.repository.CartRepository;
-import com.mobile.application.repository.ItemRepository;
-import com.mobile.application.repository.OrdersRepository;
-import com.mobile.application.service.UserServiceImpl;
+import com.mobile.application.service.CartService;
+import com.mobile.application.service.ItemServices;
+import com.mobile.application.service.OrdersService;
+import com.mobile.application.service.UserServices;
 
 @Controller
 @RequestMapping("/User")
@@ -39,29 +38,26 @@ import com.mobile.application.service.UserServiceImpl;
 public class OrdersController {
 
 	@Autowired
-	private OrdersRepository orderRepository;
+	private OrdersService orderServices;
 	@Autowired
-	private CartRepository cartRepository;
+	private CartService cartServices;
 	@Autowired
-	private UserServiceImpl userService;
+	private UserServices userServices;
 	@Autowired
-	private ItemRepository itemRepository;
+	private ItemServices itemServices;
 	@Autowired
 	private ModelMapper modelMapper;
-	@Value("${item_size}")
-	private int size;
-	Logger log = LoggerFactory.getLogger(OrdersController.class);
-
+	Logger logger = LoggerFactory.getLogger(OrdersController.class);
 
 	/**
 	 * Saves Users Orders from cart
 	 * 
-	 * @param models
-	 * @param users
-	 * @return
+	 * @param id
+	 * @param pageNumber
+	 * @param size
+	 * @param sort
+	 * @return OrderDto
 	 */
-
-	// 1st method using Request Body
 	@PostMapping(value = "/saveOrders/{id}")
 	public Page<OrdersDto> saveOrders(@PathVariable Integer id,
 			@RequestParam(value = "page", required = false) Integer pageNumber,
@@ -75,44 +71,48 @@ public class OrdersController {
 			sort = "cartid";
 
 		Page<Orders> orders = null;
-		User userList = userService.findById(id);
+		User userList = userServices.findById(id);
 		String email = null;
 		email = userList.getEmail();
 		if (Objects.isNull(email)) {
-			log.warn("Enter proper user id");
+			logger.warn("Enter proper user id");
 			throw new UserNotfoundException("email id: " + email);
 		}
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).descending());
-		Page<Cart> cartList = cartRepository.findAllById(id, pageable);
+		Page<Cart> cartList = cartServices.findAllById(id, pageable);
 		List<Cart> cart = cartList.getContent();
 		for (var iterate : cart) {
 			Orders newOrder = new Orders(id, email, iterate.getModel(), iterate.getItemname(), iterate.getQuantity(),
 					iterate.getTotal(), "IN");
-			orderRepository.save(newOrder);
-			cartRepository.deleteById(iterate.getCartid());
-			Item item = itemRepository.findByModel(iterate.getModel());
+			orderServices.save(newOrder);
+			cartServices.deleteById(iterate.getCartid());
+			Item item = itemServices.getItemByModel(iterate.getModel());
 			item.setQuantity_available(item.getQuantity_available() - iterate.getQuantity());
-			itemRepository.save(item);
+			itemServices.saveItem(item);
 		}
 		Pageable ordersPageable = PageRequest.of(pageNumber, size, Sort.by("orderid").descending());
-		orders = orderRepository.findAllOrdersById(id, ordersPageable);
+
+		orders = orderServices.findAllOrdersById(id, ordersPageable);
+
 		if (Objects.isNull(orders)) {
-			log.error("error found in saveOrders");
+			logger.error("error found in saveOrders");
 			throw new OrderNotfoundException("No Items in your Cart to order");
 		}
-		log.info("OrdersController saveOrders() response{}", orders);
+		logger.info("OrdersController saveOrders() response{}", orders);
 
 		return orders.map(allOrders -> {
-			return modelMapper.map(allOrders,OrdersDto.class);
+			return modelMapper.map(allOrders, OrdersDto.class);
 		});
 	}
 
 	/**
 	 * Removes Users Specified Orders
 	 * 
-	 * @param orderid
-	 * @param user
-	 * @return
+	 * @param id
+	 * @param pageNumber
+	 * @param size
+	 * @param sort
+	 * @return OrderDto
 	 */
 	@DeleteMapping("/removeOrder/{id}/{orderid}")
 	public Page<OrdersDto> remove(@PathVariable Integer id, @PathVariable("orderid") int orderid,
@@ -125,34 +125,34 @@ public class OrdersController {
 			size = 50;
 		if (Objects.isNull(sort))
 			sort = "orderid";
-		if(Objects.isNull(id) && Objects.isNull(orderid))
-		{
-			log.warn("Enter correct Details");
-			throw new OrderNotfoundException("id ="+id+" or orderid="+orderid+" is incorect");
+		if (Objects.isNull(id) && Objects.isNull(orderid)) {
+			logger.warn("Enter correct Details");
+			throw new OrderNotfoundException("id =" + id + " or orderid=" + orderid + " is incorect");
 		}
 		Page<Orders> orders = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).descending());
-		orderRepository.deleteById(orderid);
-		
-		orders = orderRepository.findAllOrdersById(id, pageable);
+		orderServices.deleteById(orderid);
+
+		orders = orderServices.findAllOrdersById(id, pageable);
 		if (Objects.isNull(orders)) {
-			log.error("error found in remove orders");
+			logger.error("error found in remove orders");
 			throw new OrderNotfoundException("No Items in your Cart to order");
 		}
-		log.info("OrdersController remove() response{}", orders);
+		logger.info("OrdersController remove() response{}", orders);
 
 		return orders.map(allOrders -> {
-			return modelMapper.map(allOrders,OrdersDto.class);
+			return modelMapper.map(allOrders, OrdersDto.class);
 		});
 	}
 
-	
-	
 	/**
 	 * All yet to Complete Orders Every Order
 	 * 
 	 * @param id
-	 * @return
+	 * @param pageNumber
+	 * @param size
+	 * @param sort
+	 * @return OrderDto
 	 */
 	@GetMapping(value = "/getAllOrder/{id}")
 	public Page<OrdersDto> getEveryOrder(@PathVariable Integer id,
@@ -165,22 +165,21 @@ public class OrdersController {
 			size = 50;
 		if (Objects.isNull(sort))
 			sort = "orderid";
-
 		Page<Orders> newOrders = null;
 		if (Objects.isNull(id)) {
-			log.warn("Enter correct User id");
+			logger.warn("Enter correct User id");
 			throw new UserNotfoundException("User id: " + id);
 		}
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).descending());
-		newOrders = orderRepository.findAllOrdersById(id, pageable);
+		newOrders = orderServices.findAllOrdersById(id, pageable);
 		if (Objects.isNull(newOrders)) {
-			log.error("error found in get every unpaid orders");
+			logger.error("error found in get every unpaid orders");
 			throw new OrderNotfoundException("No Items in your Cart to order");
 		}
-		log.info("OrdersController getEveryOrder() response{}", newOrders);
+		logger.info("OrdersController getEveryOrder() response{}", newOrders);
 
 		return newOrders.map(allOrders -> {
-			return modelMapper.map(allOrders,OrdersDto.class);
+			return modelMapper.map(allOrders, OrdersDto.class);
 		});
 	}
 

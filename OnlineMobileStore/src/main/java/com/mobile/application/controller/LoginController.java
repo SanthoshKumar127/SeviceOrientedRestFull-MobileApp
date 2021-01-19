@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.mobile.application.dto.UserDto;
 import com.mobile.application.exception.UserNotfoundException;
 import com.mobile.application.model.User;
-import com.mobile.application.service.UserServiceImpl;
+import com.mobile.application.service.UserServices;
 
 @Controller
 @ResponseBody
@@ -35,7 +34,7 @@ public class LoginController {
 	}
 
 	@Autowired
-	private UserServiceImpl userService;
+	private UserServices userService;
 	
 	@Autowired
 	private ModelMapper modelMapper;
@@ -92,7 +91,7 @@ public class LoginController {
 	 * @return
 	 * 
 	 */
-	@GetMapping("/validateuser/{email}/{password}")
+	@GetMapping("/validateUser/{email}/{password}")
 	public UserDto loginUser(@PathVariable String email, @PathVariable String password) {
 		User userList = null;
 		userList = userService.findByEmailAndPassword(email, password);

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import com.mobile.application.model.User;
-import com.mobile.application.repository.UserServiceImpl;
+import com.mobile.application.repository.UserRepository;
 
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -16,7 +16,7 @@ import com.mobile.application.repository.UserServiceImpl;
  public class LoginControllerTests {
   
  @Mock
- private UserServiceImpl userRepository;
+ private UserRepository userRepository;
  @InjectMocks 
  LoginController loginController;
  

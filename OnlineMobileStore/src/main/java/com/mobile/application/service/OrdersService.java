@@ -13,23 +13,23 @@ import com.mobile.application.repository.OrdersRepository;
 
 @Service
 @Transactional
-
 public class OrdersService {
 
 	@Autowired
 	private OrdersRepository orderRepository;
+	
 	public Page<Orders> findAllOrdersById(Integer id, Pageable pageable) {
 		return orderRepository.findAllOrdersById(id, pageable);
 	}
 	public Orders getOne(Integer valueOf) {
 		return orderRepository.getOne(valueOf);
 	}
-	public void save(Orders value) {
-		orderRepository.save(value);
-		
-	}
+	
 	public void deleteById(int orderid) {
 		orderRepository.deleteById(orderid);
+	}
+	public void save(Orders newOrder) {
+		orderRepository.save(newOrder);
 	}
 
 }

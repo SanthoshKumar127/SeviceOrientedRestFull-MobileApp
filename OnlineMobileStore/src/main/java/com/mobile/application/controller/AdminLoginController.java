@@ -13,13 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.mobile.application.dto.UserDto;
 import com.mobile.application.exception.UserNotfoundException;
 import com.mobile.application.model.User;
-import com.mobile.application.service.UserServiceImpl;
+import com.mobile.application.service.UserServices;
 
 /**
  * Admin Login Controller
@@ -43,19 +41,10 @@ public class AdminLoginController {
 	}
 
 	@Autowired
-	private UserServiceImpl userService;
+	private UserServices userService;
 	@Autowired
 	private ModelMapper modelMapper;
 	Logger log = LoggerFactory.getLogger(AdminLoginController.class);
-	/**
-	 * maps to admin register page
-	 * 
-	 * @return
-	 */
-	@RequestMapping("register1")
-	public String register1() {
-		return "register1";
-	}
 
 	/**
 	 * creating post mapping that post the new user detail in the database

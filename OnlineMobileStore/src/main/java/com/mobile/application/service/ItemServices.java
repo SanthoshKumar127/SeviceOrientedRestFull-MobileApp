@@ -12,7 +12,7 @@ import com.mobile.application.repository.ItemRepository;
 
 @Service
 @Transactional
-public class ItemServicesAdmin {
+public class ItemServices {
 
 	@Autowired
 	ItemRepository itemRepository;
@@ -31,6 +31,10 @@ public class ItemServicesAdmin {
 
 	public void deleteItem(int model) {
 		itemRepository.deleteById(model);
+	}
+
+	public Page<Item> findByItemtype(String itemType, Pageable pageable) {
+		return (Page<Item>) itemRepository.findByItemtype(itemType,pageable);
 	}
 
 }

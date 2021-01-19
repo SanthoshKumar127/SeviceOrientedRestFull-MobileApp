@@ -7,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.mobile.application.dto.CartDto;
 import com.mobile.application.dto.ItemDto;
 import com.mobile.application.exception.CartNotfoundException;
@@ -31,44 +29,40 @@ import com.mobile.application.exception.UserNotfoundException;
 import com.mobile.application.model.Cart;
 import com.mobile.application.model.Item;
 import com.mobile.application.model.User;
-import com.mobile.application.repository.CartRepository;
-import com.mobile.application.repository.ItemRepository;
-import com.mobile.application.repository.UserServiceImpl;
+import com.mobile.application.repository.UserRepository;
+import com.mobile.application.service.CartService;
+import com.mobile.application.service.ItemServices;
 
 @Controller
 @RequestMapping("/User")
 @ResponseBody
 public class MultipleCartController {
 	@Autowired
-	private ItemRepository itemRepository;
+	private ItemServices itemServices;
 	@Autowired
-	private CartRepository cartRepository;
+	private CartService cartServices;
 	@Autowired
-	private UserServiceImpl userRepository;
+	private UserRepository userServices;
 	@Autowired
 	private ModelMapper modelMapper;
-	@Value("${item_size}")
-	private int size;
-	Logger log = LoggerFactory.getLogger(AccessoriesController.class);
+	Logger logger = LoggerFactory.getLogger(AccessoriesController.class);
 
 	/**
 	 * maps particular Item
 	 * 
 	 * @param modelType
-	 * @return
+	 * @return ItemDto
 	 */
+	@GetMapping(value = "/addCart/{modelType}")
+	public ItemDto getCartData(@PathVariable("modelType") int modelType) {
 
-//Using Model Mapper
-	@GetMapping(value = "/addcart/{modelType}")
-	public ItemDto getData1(@PathVariable("modelType") int modelType) {
-
-		Item itemDetails = itemRepository.findByModel(modelType);
+		Item itemDetails = itemServices.getItemByModel(modelType);
 		if (Objects.isNull(itemDetails)) {
-			log.warn("Enter correct model number");
-			log.error("error found in addCart");	
+			logger.warn("Enter correct model number");
+			logger.error("error found in addCart");
 			throw new ItemNotfoundException("model: " + modelType);
 		}
-		log.info("MultipleCartController getData1() response{}", itemDetails);
+		logger.info("MultipleCartController getCartData() response{}", itemDetails);
 
 		ItemDto dta = modelMapper.map(itemDetails, ItemDto.class);
 		return dta;
@@ -76,9 +70,13 @@ public class MultipleCartController {
 	}
 
 	/**
-	 * @param cart
-	 * @param page
-	 * @return
+	 * Saving the Item into Cart
+	 * 
+	 * @param cartDto
+	 * @param pageNumber
+	 * @param size
+	 * @param sort
+	 * @return CartDto
 	 */
 	@PostMapping(value = "/saveCart")
 	public Page<CartDto> saveToCart(@RequestBody CartDto cartDto,
@@ -93,29 +91,29 @@ public class MultipleCartController {
 			sort = "cartid";
 
 		Cart cart = modelMapper.map(cartDto, Cart.class);
-		Item itemDetails = itemRepository.findByModel(cart.getModel());
+		Item itemDetails = itemServices.getItemByModel(cart.getModel());
 		if (Objects.isNull(itemDetails)) {
-			log.warn("Cart Data Incorect for saveCart");
+			logger.warn("Cart Data Incorect for saveCart");
 			throw new ItemNotfoundException("model: " + cart.getModel());
 		}
 		Page<Cart> newCart = null;
 		if (itemDetails.getQuantity_available() < cart.getQuantity()) {
-			log.error("error found in SaveCart");			
+			logger.error("error found in SaveCart");
 			throw new StockOverException("model: " + cart.getModel());
 		}
-		User userList = userRepository.findById(cart.getId());
+		User userList = userServices.findById(cart.getId());
 		if (Objects.isNull(userList)) {
-			log.error("User Data Incorect for saveCart");
+			logger.error("User Data Incorect for saveCart");
 			throw new UserNotfoundException("user id: " + cart.getId());
 		}
 		Pageable pageable = PageRequest.of(pageNumber, 15, Sort.by("cartid").descending());
-		cartRepository.save(cart);
-		newCart = cartRepository.findAllById(cart.getId(), pageable);
-		log.info("MultipleCartController saveToCart() response{}", newCart);
+		cartServices.save(cart);
+		newCart = cartServices.findAllById(cart.getId(), pageable);
+		logger.info("MultipleCartController saveToCart() response{}", newCart);
 
 		if (Objects.isNull(newCart)) {
-			log.error("Error while saveCart");
-			
+			logger.error("Error while saveCart");
+
 			throw new CartNotfoundException("No cart Found");
 		}
 		return newCart.map(product -> {
@@ -127,9 +125,12 @@ public class MultipleCartController {
 	 * All cart values of particular user
 	 * 
 	 * @param id
-	 * @return
+	 * @param pageNumber
+	 * @param size
+	 * @param sort
+	 * @return CartDto
 	 */
-	@GetMapping(value = "/getcart/{id}")
+	@GetMapping(value = "/getCart/{id}")
 	public Page<CartDto> getCartAll(@PathVariable Integer id,
 			@RequestParam(value = "page", required = false) Integer pageNumber,
 			@RequestParam(value = "size", required = false) Integer size,
@@ -143,14 +144,14 @@ public class MultipleCartController {
 		Page<Cart> cart = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).descending());
 		if (Objects.isNull(id)) {
-			log.warn("Cart Data Incorect for getCart");
+			logger.warn("Cart Data Incorect for getCart");
 			throw new UserNotfoundException("user id: " + id);
 		}
-		cart = cartRepository.findAllById(id, pageable);
-		log.info("MultipleCartController getCartAll() response{}", cart);
+		cart = cartServices.findAllById(id, pageable);
+		logger.info("MultipleCartController getCartAll() response{}", cart);
 
 		if (Objects.isNull(cart)) {
-			log.error("Error found in get cart");		
+			logger.error("Error found in get cart");
 			throw new CartNotfoundException("Cart Not found");
 		}
 		return cart.map(product -> {
@@ -163,9 +164,11 @@ public class MultipleCartController {
 	 * 
 	 * @param id
 	 * @param cartid
-	 * @return
+	 * @param pageNumber
+	 * @param size
+	 * @param sort
+	 * @return CartDto
 	 */
-
 	@DeleteMapping("/remove/{id}/{cartid}")
 	public Page<CartDto> remove(@PathVariable Integer id, @PathVariable("cartid") Integer cartid,
 			@RequestParam(value = "page", required = false) Integer pageNumber,
@@ -180,14 +183,15 @@ public class MultipleCartController {
 		Page<Cart> cartDetails = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).descending());
 		if (id == null || cartid == null) {
-			log.warn("Cart Data Incorect for remove cart");
-			throw new CartNotfoundException("id or cartid is not correct");}
-		cartRepository.deleteById(cartid);
-		cartDetails = cartRepository.findAllById(id, pageable);
-		log.info("MultipleCartController remove() response{}", cartDetails);
+			logger.warn("Cart Data Incorect for remove cart");
+			throw new CartNotfoundException("id or cartid is not correct");
+		}
+		cartServices.deleteById(cartid);
+		cartDetails = cartServices.findAllById(id, pageable);
+		logger.info("MultipleCartController remove() response{}", cartDetails);
 
 		if (Objects.isNull(cartDetails)) {
-			log.error("Error found in remove cart");
+			logger.error("Error found in remove cart");
 			throw new CartNotfoundException("No cart Found");
 		}
 		return cartDetails.map(product -> {

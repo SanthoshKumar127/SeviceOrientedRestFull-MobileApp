@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import com.mobile.application.model.User;
 
 @EnableJpaRepositories
-public interface UserServiceImpl extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, String> {
 
 	User findByEmail(String email);
 

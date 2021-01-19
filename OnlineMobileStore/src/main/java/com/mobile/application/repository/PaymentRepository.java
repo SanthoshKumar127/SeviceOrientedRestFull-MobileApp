@@ -7,15 +7,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-
 import com.mobile.application.model.Payment;
+
 @EnableJpaRepositories
-public interface PaymentRepository extends JpaRepository<Payment,Integer > {
+public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
 	List<Payment> findAllByEmail(String email);
 
 	List<Payment> findAllById(int id);
-	
+
 	Page<Payment> findAllById(Integer id, Pageable paymentPageable);
 
 }
