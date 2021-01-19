@@ -2,7 +2,6 @@ package com.mobile.application.service;
 
 import javax.transaction.Transactional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,25 +15,22 @@ import com.mobile.application.repository.ItemRepository;
 public class ItemServicesAdmin {
 
 	@Autowired
-	ItemRepository itemRepo;
-	 
+	ItemRepository itemRepository;
 
 	public Page<Item> getAllItems(Pageable pageable) {
-		return (Page<Item>) itemRepo.findAll(pageable);
+		return (Page<Item>) itemRepository.findAll(pageable);
 	}
 
 	public Item getItemByModel(int model) {
-		return itemRepo.findById(model).get();
+		return itemRepository.findById(model).get();
 	}
 
 	public void saveItem(Item item) {
-		itemRepo.save(item);
+		itemRepository.save(item);
 	}
 
 	public void deleteItem(int model) {
-		itemRepo.deleteById(model);
+		itemRepository.deleteById(model);
 	}
-
-	
 
 }

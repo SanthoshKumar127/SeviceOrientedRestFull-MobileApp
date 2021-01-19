@@ -1,5 +1,7 @@
 package com.mobile.application.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,9 +12,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name="orders")
 
-public class Orders {
+public class Orders implements Serializable{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6141474308773085693L;
+
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "orderid", unique = true, nullable = false)

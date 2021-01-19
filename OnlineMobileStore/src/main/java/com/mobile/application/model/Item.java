@@ -1,6 +1,8 @@
 package com.mobile.application.model;
 
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 
 import javax.persistence.Id;
@@ -9,8 +11,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="item")
 
-public class Item {
+public class Item implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3991364278408457952L;
+
 	@Id
 	
 	
@@ -158,7 +165,7 @@ public class Item {
 
 	@Override
 	public String toString() {
-		return "Item [model=" + model + ", itemname=" + itemname + ", color=" + color + ", price=" + price
+		return " [model=" + model + ", itemname=" + itemname + ", color=" + color + ", price=" + price
 				+ ", features=" + features + ", image=" + image + ", productid=" + productid + ", categoryid="
 				+ categoryid + ", quantity_available=" + quantity_available + ", itemtype=" + itemtype + "]";
 	}

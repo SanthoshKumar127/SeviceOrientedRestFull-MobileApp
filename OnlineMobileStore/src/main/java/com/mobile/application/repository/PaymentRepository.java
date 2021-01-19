@@ -15,7 +15,7 @@ public interface PaymentRepository extends JpaRepository<Payment,Integer > {
 	List<Payment> findAllByEmail(String email);
 
 	List<Payment> findAllById(int id);
-
-	Page<Payment> findAllOrdersById(Integer id, Pageable pageable);
+	
+	Page<Payment> findAllById(Integer id, Pageable paymentPageable);
 
 }

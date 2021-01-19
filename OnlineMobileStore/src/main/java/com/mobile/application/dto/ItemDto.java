@@ -1,6 +1,13 @@
 package com.mobile.application.dto;
 
-public class ItemDto {
+import java.io.Serializable;
+
+public class ItemDto  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8307090744890274824L;
 
 	private int model;
 	
@@ -127,7 +134,7 @@ public class ItemDto {
 
 	@Override
 	public String toString() {
-		return "ItemDto [model=" + model + ", itemname=" + itemname + ", color=" + color + ", price=" + price
+		return "[model=" + model + ", itemname=" + itemname + ", color=" + color + ", price=" + price
 				+ ", features=" + features + ", image=" + image + ", productid=" + productid + ", categoryid="
 				+ categoryid + ", quantity_available=" + quantity_available + ", itemtype=" + itemtype + "]";
 	}

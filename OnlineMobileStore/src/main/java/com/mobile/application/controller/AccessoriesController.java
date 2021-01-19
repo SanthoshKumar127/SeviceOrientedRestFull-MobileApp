@@ -19,6 +19,8 @@ import com.mobile.application.exception.ItemNotfoundException;
 import com.mobile.application.model.Image;
 import com.mobile.application.model.Item;
 import com.mobile.application.repository.ItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @ResponseBody
@@ -30,6 +32,7 @@ public class AccessoriesController {
 	@Autowired
 	private ModelMapper modelMapper;
 	Image image;
+	Logger log = LoggerFactory.getLogger(AccessoriesController.class);
 
 	/**
 	 * maps to Accessories page
@@ -61,8 +64,12 @@ public class AccessoriesController {
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "powerbank";
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController power() response{}", product);
+
 		if (Objects.isNull(product)) {
+			log.error("error found in power");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -89,7 +96,9 @@ public class AccessoriesController {
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "headset";
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController headset() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in headset");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -115,8 +124,12 @@ public class AccessoriesController {
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "charger";
+		log.info("AccessoriesController charger()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController charger() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in charger");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -138,15 +151,19 @@ public class AccessoriesController {
 		if (Objects.isNull(size))
 			size = 25;
 		if (Objects.isNull(sort))
-			sort = "mobilecover";
+			sort = "model";
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
-		String itemType = "charger";
+		String itemType = "mobilecover";
+		log.info("AccessoriesController cover()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController cover() response{}", product);
 		if (Objects.isNull(product)) {
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
+			log.error("error found in cover");
 			return modelMapper.map(item, ItemDto.class);
 		});
 	}
@@ -169,8 +186,12 @@ public class AccessoriesController {
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "mobilescreen";
+		log.info("AccessoriesController screen()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController screen() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in mobile screen");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -192,12 +213,16 @@ public class AccessoriesController {
 		if (Objects.isNull(size))
 			size = 25;
 		if (Objects.isNull(sort))
-			sort = "usb";
+			sort = "model";
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
-		String itemType = "charger";
+		String itemType = "usb";
+		log.info("AccessoriesController usb()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController usb() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in usb");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -223,8 +248,12 @@ public class AccessoriesController {
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "applemobile";
+		log.info("AccessoriesController apple()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController apple() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in apple mobile");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -246,12 +275,16 @@ public class AccessoriesController {
 		if (Objects.isNull(size))
 			size = 25;
 		if (Objects.isNull(sort))
-			sort = "vivomobile";
+			sort = "model";
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
-		String itemType = "charger";
+		String itemType = "vivomobile";
+		log.info("AccessoriesController vivo()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController vivo() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in vivo mobile");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -278,8 +311,12 @@ public class AccessoriesController {
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
 		String itemType = "realmemobile";
+		log.info("AccessoriesController realme()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController realme() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in realme mobile");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -301,12 +338,16 @@ public class AccessoriesController {
 		if (Objects.isNull(size))
 			size = 25;
 		if (Objects.isNull(sort))
-			sort = "oneplusmobile";
+			sort = "model";
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
-		String itemType = "charger";
+		String itemType = "oneplusmobile";
+		log.info("AccessoriesController oneplus()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController oneplus() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in oneplus mobile");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -328,12 +369,16 @@ public class AccessoriesController {
 		if (Objects.isNull(size))
 			size = 25;
 		if (Objects.isNull(sort))
-			sort = "samsungmobile";
+			sort = "model";
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
-		String itemType = "charger";
+		String itemType = "samsungmobile";
+		log.info("AccessoriesController samsung()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController samsung() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in samsung mobile");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {
@@ -355,12 +400,16 @@ public class AccessoriesController {
 		if (Objects.isNull(size))
 			size = 25;
 		if (Objects.isNull(sort))
-			sort = "redmimobile";
+			sort = "model";
 		Page<Item> product = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort).ascending());
-		String itemType = "charger";
+		String itemType = "redmimobile";
+		log.info("AccessoriesController mi()");
+
 		product = itemRepository.findByItemtype(itemType, pageable);
+		log.info("AccessoriesController mi() response{}", product);
 		if (Objects.isNull(product)) {
+			log.error("error found in mi mobile");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		return product.map(item -> {

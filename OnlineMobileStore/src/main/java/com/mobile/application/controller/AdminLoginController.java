@@ -3,8 +3,11 @@ package com.mobile.application.controller;
 import java.util.Objects;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mobile.application.dto.UserDto;
 import com.mobile.application.exception.UserNotfoundException;
 import com.mobile.application.model.User;
-import com.mobile.application.repository.UserRepository;
+import com.mobile.application.service.UserServiceImpl;
 
 /**
  * Admin Login Controller
@@ -40,10 +43,10 @@ public class AdminLoginController {
 	}
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserServiceImpl userService;
 	@Autowired
 	private ModelMapper modelMapper;
-
+	Logger log = LoggerFactory.getLogger(AdminLoginController.class);
 	/**
 	 * maps to admin register page
 	 * 
@@ -67,11 +70,13 @@ public class AdminLoginController {
 		User user = null;
 		String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 		if (email.matches(regex) && users.getRolename().equals("Admin")) {
-			user = userRepository.save(userEntity);
+			user = userService.saveUser(userEntity);
 			if (Objects.isNull(users.getId())) {
+				log.error(" Error : Enter correct User Details");
 				throw new UserNotfoundException("Error while Admin Registration..!");
 			}
 		}
+		log.info("AdminLoginController saveAdmin() response{}", user);
 		return modelMapper.map(user, UserDto.class);
 	}
 
@@ -88,11 +93,13 @@ public class AdminLoginController {
 		User user = null;
 		String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 		if (email.matches(regex)) {
-			user = userRepository.save(userEntity);
+			user = userService.saveUser(userEntity);
 		}
 		if (Objects.isNull(user)) {
+			log.error(" Error : Enter correct User Details");
 			throw new UserNotfoundException("Error while Admin Updation..!");
 		}
+		log.info("AdminLoginController updateAdmin() response{}", user);
 		return modelMapper.map(user, UserDto.class);
 	}
 
@@ -104,15 +111,18 @@ public class AdminLoginController {
 	 * @param request
 	 * @return
 	 */
-	@PostMapping("/validateAdmin/{email}/{password}")
+	@GetMapping("/validateAdmin/{email}/{password}")
 	public UserDto LoginAdmin(@PathVariable String email, @PathVariable String password) {
-		User userList = userRepository.findByEmailAndPassword(email, password);
+		User userList = userService.findByEmailAndPassword(email, password);
 		if (Objects.isNull(userList)) {
+			log.error(" Error : Enter correct User Details");
 			throw new UserNotfoundException("email or Password is incorrect for this email id " + email);
 		}
 		if (userList.getRolename().equals("Admin")) {
+			log.info("AdminLoginController LoginAdmin() response{}", userList);		
 			return modelMapper.map(userList, UserDto.class);
 		} else
+			log.error(" Error : Enter correct User Details");
 			throw new UserNotfoundException("email or Password is incorrect for this email id " + email);
 	}
 }

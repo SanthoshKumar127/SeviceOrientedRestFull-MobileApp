@@ -97,6 +97,14 @@ public class PaymentDto {
 	public PaymentDto() {
 		super();
 	}
+
+	public PaymentDto(String fullname, String address, String city, String modeofpayment) {
+		super();
+		this.fullname = fullname;
+		this.address = address;
+		this.city = city;
+		this.modeofpayment = modeofpayment;
+	}
 	@Override
 	public String toString() {
 		return "PaymentDto [paymentid=" + paymentid + ", model=" + model + ", orderid=" + orderid + ", fullname="

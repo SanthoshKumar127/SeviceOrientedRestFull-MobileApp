@@ -165,6 +165,13 @@ public class Payment {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Payment(String fullname, String address, String city, String modeofpayment) {
+		super();
+		this.fullname = fullname;
+		this.address = address;
+		this.city = city;
+		this.modeofpayment = modeofpayment;
+	}
 	@Override
 	public String toString() {
 		return "Payment [paymentid=" + paymentid + ",id="+ id +  ", fullname=" + fullname + ", email="

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,8 +31,9 @@ import com.mobile.application.model.Item;
 public class SearchController {
 
 	@Autowired
-	private ItemRepository itemRepo;
+	private ItemRepository itemService;
 
+	Logger log = LoggerFactory.getLogger(SearchController.class);
 	@Autowired
 	ModelMapper modelMapper;
 
@@ -54,10 +57,16 @@ public class SearchController {
 			size = 25;
 		if (Objects.isNull(sort))
 			sort = "model";
+		if (Objects.isNull(searchItem))
+		{
+			log.warn("Enter correct Item name");
+			throw new ItemNotfoundException("Item : " + searchItem + "cannot be null");
+		}
+			
 		Page<Item> items = null;
 		Page<Item> pages = null;
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort));
-		items = itemRepo.findAll(pageable);
+		items = itemService.findAll(pageable);
 		List<Item> item = items.getContent();
 		List<Item> result = new ArrayList<Item>();
 		for (var list : item) {
@@ -68,8 +77,11 @@ public class SearchController {
 		}
 		pages = new PageImpl<>(result);
 		if (Objects.isNull(pages)) {
+			log.error("error found in Search Operation");
 			throw new ItemNotfoundException("Item : " + searchItem + "not Found");
 		}
+		log.info("SearchController searchItemOpr() response{}", pages);
+
 		return pages.map(product -> {
 			return modelMapper.map(product, ItemDto.class);
 		});

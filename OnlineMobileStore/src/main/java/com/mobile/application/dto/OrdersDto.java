@@ -1,8 +1,14 @@
 package com.mobile.application.dto;
 
+import java.io.Serializable;
 
-public class OrdersDto {
+public class OrdersDto  implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6314506334870274223L;
+
 	private int orderid;
 	
 	private String email;

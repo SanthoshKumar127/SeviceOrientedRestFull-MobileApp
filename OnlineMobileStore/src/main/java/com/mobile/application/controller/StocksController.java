@@ -5,6 +5,8 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,7 +28,7 @@ import com.mobile.application.exception.ItemNotfoundException;
 import com.mobile.application.model.Item;
 import com.mobile.application.repository.ItemRepository;
 import com.mobile.application.repository.PaymentRepository;
-import com.mobile.application.repository.UserRepository;
+import com.mobile.application.repository.UserServiceImpl;
 import com.mobile.application.service.ItemServicesAdmin;
 import com.mobile.application.service.UserServicesAdmin;
 
@@ -40,7 +42,7 @@ public class StocksController {
 	ItemServicesAdmin itemService;
 	@Autowired
 	UserServicesAdmin userService;
-	UserRepository userRepo;
+	UserServiceImpl userRepo;
 	@Autowired
 	ItemRepository itemRepo;
 	@Value("${item_size}")
@@ -50,6 +52,7 @@ public class StocksController {
 	@Autowired
 	ModelMapper modelMapper;
 
+	Logger log = LoggerFactory.getLogger(StocksController.class);
 	/**
 	 * Stocks home
 	 * 
@@ -65,19 +68,22 @@ public class StocksController {
 		if (Objects.isNull(pageNumber))
 			pageNumber = 0;
 		if (Objects.isNull(size))
-			size = 25;
+			size = 50;
 		if (Objects.isNull(sort))
 			sort = "model";
 
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort));
 		products = itemService.getAllItems(pageable);
 		if (Objects.isNull(products)) {
-
+			log.error("error found in productList");
 			throw new ItemNotfoundException("No products Found.!");
 		}
+		log.info("StocksController productList() response{}", products);
+
 		return products.map(item -> {
 			return modelMapper.map(item, ItemDto.class);
 		});
+
 
 	}
 
@@ -108,15 +114,22 @@ public class StocksController {
 		if (Objects.isNull(pageNumber))
 			pageNumber = 0;
 		if (Objects.isNull(size))
-			size = 25;
+			size = 50;
 		if (Objects.isNull(sort))
 			sort = "model";
+		if (Objects.isNull(model)) {
+			log.warn("Enter correct model number");
+			throw new ItemNotfoundException("No products Found.!");
+		}	
 		itemService.deleteItem(model);
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort));
 		products = itemService.getAllItems(pageable);
 		if (Objects.isNull(products)) {
+			log.error("error found in deleteItem");
 			throw new ItemNotfoundException("No products Found.!");
 		}
+		log.info("StocksController deleteItem() response{}", products);
+
 		return products.map(item -> {
 			return modelMapper.map(item, ItemDto.class);
 		});
@@ -140,17 +153,24 @@ public class StocksController {
 		if (Objects.isNull(pageNumber))
 			pageNumber = 0;
 		if (Objects.isNull(size))
-			size = 25;
+			size = 50;
 		if (Objects.isNull(sort))
 			sort = "model";
 
 		Item item = modelMapper.map(itemDto, Item.class);
+		if (Objects.isNull(item)) {
+			log.warn("Enter correct Item Details");
+			throw new ItemNotfoundException("No products Saved.!");
+		}	
 		itemService.saveItem(item);
 		Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort));
 		products = itemService.getAllItems(pageable);
 		if (Objects.isNull(products)) {
+			log.error("error found in addNewProduct");
 			throw new ItemNotfoundException("No products Found.!");
 		}
+		log.info("StocksController addNewProduct() response{}", products);
+
 		return products.map(items -> {
 			return modelMapper.map(items, ItemDto.class);
 		});
@@ -170,11 +190,12 @@ public class StocksController {
 			@RequestParam(value = "size", required = false) Integer size,
 			@RequestParam(value = "sortBy", required = false) String sort) {
 
+
 		Page<Item> products = null;
 		if (Objects.isNull(pageNumber))
 			pageNumber = 0;
 		if (Objects.isNull(size))
-			size = 25;
+			size = 50;
 		if (Objects.isNull(sort))
 			sort = "model";
 		if (itemService.getItemByModel(model) != null) {
@@ -184,14 +205,17 @@ public class StocksController {
 			Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(sort));
 			products = itemService.getAllItems(pageable);
 		} else {
+			log.warn("Enter correct Model Number");
 			throw new ItemNotfoundException("No products Found.!");
 		}
 		if (Objects.isNull(products)) {
+			log.error("error found in updateItem");
 			throw new ItemNotfoundException("product cannot Update.!");
 		}
+		log.info("StocksController updateItem() response{}", products);
+
 		return products.map(items -> {
 			return modelMapper.map(items, ItemDto.class);
 		});
-
 	}
 }

@@ -1,6 +1,5 @@
 package com.mobile.application.configuration;
 
-import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -18,13 +17,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired
-	private DataSource dataSource;
-
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.jdbcAuthentication()
-				.dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
+				.passwordEncoder(bCryptPasswordEncoder);
 	}
 
 	/**
