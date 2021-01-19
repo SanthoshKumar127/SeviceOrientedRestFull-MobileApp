@@ -29,14 +29,14 @@ import org.springframework.web.context.WebApplicationContext;
 import com.mobile.application.OnlineMobileStoreApplicationTests;
 import com.mobile.application.model.Item;
 import com.mobile.application.repository.ItemRepository;
-import com.mobile.application.service.ItemService;
+import com.mobile.application.service.ItemServices;
 
 public class AccessoriesControllerTests  extends OnlineMobileStoreApplicationTests {
 
 
 	
 	  @Autowired
-	  private ItemService service;
+	  private ItemServices service;
 	  	
 	  private MockMvc mockMvc;
 	    
